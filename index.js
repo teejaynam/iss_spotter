@@ -1,6 +1,4 @@
-const { fetchMyIP, fetchCoordsByIP } = require('./iss');
-
-let ipaddr;
+const { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes } = require('./iss');
 
 fetchMyIP((error, ip) => {
   if (error) {
@@ -9,16 +7,22 @@ fetchMyIP((error, ip) => {
   }
 
   console.log('It worked! Returned IP:' , ip);
-  //ipaddr = ip Why cant it take ipaddr when I assign it 'ip'??
-});
 
-ipaddr = '99.240.253.215';
+  fetchCoordsByIP(ip, (error, data) => {
+    if (error) {
+      console.log("Failed to fetch!",error);
+      return;
+    }
+    
+    console.log("Fetched coords:", data);
 
-fetchCoordsByIP(ipaddr, (error, data) => {
-  if (error) {
-    console.log("Failed to fetch!",error);
-    return;
-  }
-  
-  console.log("Fetched coords:", data);
+    fetchISSFlyOverTimes(data, (error, passTimes) => {
+      if (error) {
+        console.log("It didnt work",error);
+        return;
+      }
+
+      console.log("It works. Returned flyover times:", passTimes);
+    });
+  });
 });
