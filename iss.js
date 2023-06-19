@@ -13,10 +13,20 @@ const fetchMyIP = function(callback) {
   request(URL, (error,response,body) => {
     const data = JSON.parse(body);
     const ipaddr = data['ip'];
+
+    if (error) {
+      callback(error, null);
+      return;
+    }
+
+    if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
+      callback(Error(msg), null);
+      return;
+    }
+
     if (typeof ipaddr === "string") {
       callback(null, ipaddr);
-    } else {
-      callback(error, null);
     }
 
   });
